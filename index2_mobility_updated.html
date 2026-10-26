@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patxi Lavigne | Engineering Portfolio</title>
+    <meta name="theme-color" content="#edf0e8">
+    <script>document.documentElement.classList.add("js")</script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Martian+Mono:wdth,wght@75..112,400..700&display=swap" rel="stylesheet">
+    <style>
+        :root { --ink:#14221f; --sub:#3b4a45; --paper:#edf0e8; --card:#f8faf5; --sunk:#e2e8da; --accent:#0e6b52; --yellow:#f3c623; --rule:rgba(20,34,31,.22); scroll-padding-top:110px; }
+        html { scroll-behavior:smooth; }
+        body { font-family:'Instrument Sans',sans-serif; color:var(--ink); font-size:1.05rem; overflow-x:clip;
+            background-color:var(--paper);
+            background-image:linear-gradient(rgba(20,34,31,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(20,34,31,.09) 1px,transparent 1px),linear-gradient(rgba(20,34,31,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(20,34,31,.04) 1px,transparent 1px);
+            background-size:120px 120px,120px 120px,24px 24px,24px 24px; }
+        ::selection { background:var(--yellow); color:var(--ink); }
+        
+        /* Typographic hierarchy */
+        h1,h2,h3,h4 { font-family:'Bricolage Grotesque',sans-serif; letter-spacing:-.025em; font-style:normal; }
+        .tech-font { font-family:'Martian Mono',monospace; font-stretch:85%; }
+        a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:4px; border-radius:6px; }
+
+        /* palette overrides for Tailwind utilities */
+        .text-blue-600 { color:var(--accent)!important; }
+        h1 .text-blue-600 { color:var(--ink)!important; }
+        .text-slate-900,.text-slate-800 { color:var(--ink)!important; }
+        .text-slate-700,.text-slate-600,.text-slate-500 { color:var(--sub)!important; }
+        .bg-blue-600 { background:var(--accent)!important; }
+        .border-t-blue-600 { border-top-color:var(--accent)!important; }
+        .bg-slate-50,.bg-slate-100 { background:var(--sunk)!important; }
+        .border-slate-200,.border-slate-100,.border-slate-300 { border-color:var(--rule)!important; }
+        [class*="rounded-["] { border-radius:6px!important; }
+
+        /* nav */
+        nav { background:rgba(237,240,232,.92)!important; border-bottom:1.5px solid var(--ink)!important; }
+        .nav-link { position:relative; font-size:.95rem; font-weight:600; color:var(--ink); padding-bottom:4px; transition:color .2s; }
+        .nav-link::after { content:''; position:absolute; left:0; right:0; bottom:-2px; height:2px; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .35s cubic-bezier(.2,.8,.2,1); }
+        .nav-link:hover,.nav-link.active-nav { color:var(--accent); }
+        .nav-link:hover::after,.nav-link.active-nav::after { transform:scaleX(1); }
+        #progress { position:absolute; left:0; bottom:-1.5px; height:3px; width:100%; background:var(--yellow); transform:scaleX(var(--sp,0)); transform-origin:left; }
+        #nav-panel { display:none; background:var(--paper); }
+        #nav-panel.open { display:flex; }
+        @media (min-width:768px) { #nav-panel { display:none!important; } }
+
+        /* cards: instrument-panel frame with corner marks */
+        .bento-card { background:var(--card); border:1.5px solid var(--ink); border-radius:4px; position:relative; transition:transform .25s,box-shadow .25s; }
+        .bento-card::before,.bento-card::after { content:''; position:absolute; width:14px; height:14px; border:3px solid var(--accent); pointer-events:none; }
+        .bento-card::before { top:-3px; left:-3px; border-right:0; border-bottom:0; }
+        .bento-card::after { bottom:-3px; right:-3px; border-left:0; border-top:0; }
+        @media (hover:hover) { .bento-card:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 var(--ink); } }
+        a.bento-card:hover { background:var(--ink)!important; color:var(--paper)!important; }
+        a[href*="linkedin"] { border:1.5px solid var(--ink); border-radius:4px!important; box-shadow:5px 5px 0 var(--yellow)!important; }
+        .space-y-4 li { transition:padding .25s; }
+        .space-y-4 li:hover { padding-left:.5rem; }
+
+        /* hero */
+        #welcome { position:relative; }
+        #welcome > * { position:relative; z-index:1; }
+        .trace { position:absolute!important; left:-10%; width:120%; bottom:4%; height:34%; z-index:0!important; pointer-events:none; overflow:visible; }
+        .trace path { fill:none; stroke:var(--accent); stroke-width:3; stroke-dasharray:1; stroke-dashoffset:1; animation:draw 3.2s .5s cubic-bezier(.5,0,.2,1) forwards; }
+        .trace path + path { stroke:var(--yellow); stroke-width:6; opacity:.85; transform:translateY(9px); animation-delay:.9s; }
+        .photo-wrap::before { content:''; position:absolute; inset:0; transform:translate(16px,16px); border:1.5px solid var(--accent); z-index:0; }
+        .photo-frame { position:relative; z-index:1; aspect-ratio:4/5; border:1.5px solid var(--ink); background:var(--sunk); overflow:hidden; }
+        .photo-frame::after { content:''; position:absolute; left:0; right:0; top:-4%; height:3px; opacity:0; background:var(--yellow); box-shadow:0 0 18px 4px rgba(243,198,35,.55); animation:scan 5s 2.4s ease-in-out infinite; }
+
+        /* images */
+        .image-slot { border:1.5px solid var(--ink); border-radius:4px; background:var(--sunk); aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+        .image-slot img { width:100%; height:100%; object-fit:cover; transition:transform .9s cubic-bezier(.2,.8,.2,1); }
+        .group:hover .image-slot img { transform:scale(1.06); }
+
+        /* timeline that fills while scrolling */
+        .timeline-container { position:relative; width:100%; }
+        .timeline-line { position:absolute; left:24px; top:0; bottom:0; width:2px; background:var(--rule); }
+        .timeline-line::after { content:''; position:absolute; left:0; top:0; width:100%; height:calc(var(--p,0)*100%); background:var(--accent); }
+        .timeline-dot { position:absolute; left:17px; top:2.4rem; width:16px; height:16px; border-radius:50%; background:var(--sunk); border:3px solid var(--paper); box-shadow:0 0 0 2px var(--ink); transform:scale(.6); transition:transform .5s,background .5s; }
+        .rv.in > .timeline-dot { transform:scale(1); background:var(--accent); animation:ping 1.6s .5s ease-out 1; }
+
+        footer { border-top:1.5px solid var(--ink)!important; color:var(--sub)!important; }
+
+        /* Mobility: visual language levels and interactive destination cards */
+        .language-meter input[type="range"] {
+            appearance:none; -webkit-appearance:none; width:100%; height:5px; border-radius:999px;
+            background:linear-gradient(to right,var(--accent) 0%,var(--accent) var(--level,50%),#d5dbd0 var(--level,50%),#d5dbd0 100%);
+            display:block; margin:0.35rem 0 0.55rem; cursor:default;
+        }
+        .language-meter input[type="range"]::-webkit-slider-thumb {
+            appearance:none; -webkit-appearance:none; width:14px; height:14px; border-radius:50%;
+            background:var(--yellow); border:2px solid var(--ink); box-shadow:0 0 0 2px var(--card);
+        }
+        .language-meter input[type="range"]::-moz-range-thumb {
+            width:11px; height:11px; border-radius:50%; background:var(--yellow); border:2px solid var(--ink);
+        }
+        .language-scale { display:flex; justify-content:space-between; color:var(--sub); font:9px 'Martian Mono',monospace; }
+        
+        /* interactive destination cards style */
+        .dest-card { cursor:pointer; transition:all 0.25s ease; border:1.5px solid var(--ink); background:var(--card); border-radius:4px; position:relative; }
+        .dest-card:hover, .dest-card.active { background:var(--ink); color:var(--paper); transform:translateY(-3px); box-shadow:4px 4px 0 var(--accent); }
+        .dest-card:hover .dest-desc, .dest-card.active .dest-desc { color:var(--paper); opacity:0.9; }
+        .dest-card:hover .tech-font, .dest-card.active .tech-font { color:var(--yellow); }
+
+        /* motion */
+        .rule { height:1.5px; flex:1; background:var(--ink); }
+        .js .rule { transform:scaleX(0); transform-origin:left; transition:transform 1.1s .2s cubic-bezier(.2,.8,.2,1); }
+        .js .reveal.in .rule { transform:scaleX(1); }
+        .js .rv { opacity:0; }
+        .js .rv.in { animation:unveil .85s var(--d,0s) cubic-bezier(.2,.8,.2,1) both; }
+        .js h1 { animation:wipe 1s .1s cubic-bezier(.7,0,.2,1) both; }
+        .js h1 span { display:inline-block; animation:wipe 1s .45s cubic-bezier(.7,0,.2,1) both; }
+        .js #welcome p { animation:fade .9s both; }
+        .js #welcome p:nth-of-type(1) { animation-delay:.9s; }
+        .js #welcome p:nth-of-type(2) { animation-delay:1.1s; }
+        .js .photo-wrap { animation:unveil 1.1s .3s cubic-bezier(.7,0,.2,1) both; }
+        @keyframes wipe { from { clip-path:inset(-10% 100% -10% 0); } to { clip-path:inset(-10% -5% -10% 0); } }
+        @keyframes unveil { from { opacity:0; clip-path:inset(-30px -30px 100% -30px); } to { opacity:1; clip-path:inset(-30px); } }
+        @keyframes fade { from { opacity:0; } to { opacity:1; } }
+        @keyframes draw { to { stroke-dashoffset:0; } }
+        @keyframes scan { 0% { top:-4%; opacity:0; } 8% { opacity:1; } 50% { top:100%; opacity:1; } 58%,100% { top:100%; opacity:0; } }
+        @keyframes ping { from { box-shadow:0 0 0 2px var(--ink),0 0 0 2px var(--yellow); } to { box-shadow:0 0 0 2px var(--ink),0 0 0 20px rgba(243,198,35,0); } }
+
+        @media (prefers-reduced-motion:reduce) {
+            html { scroll-behavior:auto; }
+            *,*::before,*::after { animation:none!important; transition:none!important; }
+            .js .rv,.js h1,.js #welcome p { opacity:1; }
+            .trace path { stroke-dashoffset:0; }
+            .js .rule { transform:none; }
+            .timeline-dot { transform:none; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- NAVIGATION (6 EXPLICIT SECTIONS) -->
+    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 py-4 md:py-6 flex justify-between items-center">
+            <span class="tech-font font-bold text-lg md:text-xl tracking-tight text-slate-900">Patxi LAVIGNE</span>
+            <div id="nav-links" class="hidden md:flex space-x-10">
+                <a href="#welcome" class="nav-link">Welcome</a>
+                <a href="#engineering" class="nav-link">Engineering</a>
+                <a href="#mobility" class="nav-link">Mobility</a>
+                <a href="#engagement" class="nav-link">Engagement</a>
+                <a href="#activities" class="nav-link">Activities</a>
+                <a href="#career" class="nav-link">Career</a>
+            </div>
+            <button id="nav-toggle" type="button" class="md:hidden p-2 -mr-2 text-slate-900" aria-label="Menu" aria-expanded="false" aria-controls="nav-panel">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+        </div>
+        <div id="progress"></div>
+        <div id="nav-panel" class="flex-col gap-6 px-6 py-6 border-t border-slate-200 bg-white"></div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-8">
+
+        <!-- 1. WELCOME SECTION WITH PHOTO -->
+        <section id="welcome" class="min-h-screen flex flex-col md:flex-row items-center gap-16 pt-20 mb-20 reveal">
+            <svg class="trace" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true">
+                <path pathLength="1" d="M0 150 C60 40 120 40 180 150 S300 260 360 150 S480 40 540 150 S660 260 720 150 L760 150 L760 70 L850 70 L850 230 L940 230 L940 70 L1030 70 L1030 150 L1200 150"/>
+                <path pathLength="1" d="M0 150 C60 40 120 40 180 150 S300 260 360 150 S480 40 540 150 S660 260 720 150 L760 150 L760 70 L850 70 L850 230 L940 230 L940 70 L1030 70 L1030 150 L1200 150"/>
+            </svg>
+            <div class="flex-1">
+                <h1 class="text-7xl md:text-9xl font-extrabold tracking-tight text-slate-900 leading-[0.9] mb-8">
+                    Patxi <br><span class="text-blue-600">LAVIGNE</span>
+                </h1>
+                <p class="text-2xl md:text-3xl text-slate-700 font-semibold max-w-2xl mb-6">
+                    3EA Engineering Student at <br>
+                    <span class="text-slate-900">ENSEEIHT Toulouse (31)</span>
+                </p>
+                <p class="text-lg text-slate-700 font-normal max-w-xl leading-relaxed">
+                    Passionate about embedded systems, instrumentation, and automation
+                </p>
+            </div>
+            
+            <!-- Photo Frame Displayed Here -->
+            <div class="w-full md:w-[400px] photo-wrap">
+                <div class="photo-frame">
+                    <img src="photo_patxi.jpg" alt="Patxi Lavigne" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ENGINEERING SECTION -->
+        <section id="engineering" class="mb-40 reveal">
+            <div class="flex items-center gap-6 mb-16">
+                <h2 class="tech-font text-blue-600 text-xs md:text-sm font-bold uppercase tracking-[0.4em]">// Engineering</h2>
+                <div class="rule"></div>
+            </div>
+
+            <!-- SKILLS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+                <div class="bento-card p-6 md:p-10 md:col-span-2">
+                    <span class="tech-font text-xs font-bold text-slate-800 uppercase tracking-widest block mb-8">// Technical_Core</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div>
+                            <p class="tech-font text-xs font-bold text-blue-600 mb-3 uppercase tracking-wider">Instrumentation</p>
+                            <p class="text-base text-slate-800 leading-relaxed font-normal">Measurement chains, sensor implementation, GUM uncertainty analysis, calibration protocols.</p>
+                        </div>
+                        <div>
+                            <p class="tech-font text-xs font-bold text-blue-600 mb-3 uppercase tracking-wider">Digital Tools</p>
+                            <p class="text-base text-slate-800 leading-relaxed font-normal">Python, MATLAB, LabVIEW, Arduino, Fusion 360, Creo, Optimu, Power Automate.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bento-card p-6 md:p-10 bg-slate-50 border-slate-200">
+                    <span class="tech-font text-xs font-bold text-slate-800 uppercase tracking-widest block mb-8">// Soft_Skills</span>
+                    <ul class="space-y-4 font-semibold text-sm text-slate-900">
+                        <li class="flex justify-between items-center py-1"><span>Teamwork</span></li>
+                        <li class="flex justify-between items-center py-1"><span>Project Management</span></li>
+                        <li class="flex justify-between items-center py-1"><span>Creativity</span></li>
+                        <li class="flex justify-between items-center py-1"><span>Problem Solving</span></li>
+                        <li class="flex justify-between items-center py-1"><span>Adaptability</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PROJECTS WITH PHOTO SLOTS -->
+            <div class="grid md:grid-cols-2 gap-12 md:gap-16">
+                <div class="group">
+                    <div class="image-slot mb-6">
+                        <img src="nexteam_project.jpg" alt="Nexteam Internship" loading="lazy" onerror="this.style.display='none'">
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold mb-2 text-slate-900 tracking-tight">METROLOGY INTERN (11 weeks)</h3>
+                    <p class="tech-font text-xs text-blue-600 mb-4 font-bold uppercase tracking-wider">Nexteam Machining, Escout (64)</p>
+                    <p class="text-base text-slate-700 leading-relaxed font-normal">
+                        Management of a park of 3,000+ measurement instruments. Implementation of Power Automate tools to optimize quality tracking and operational precision.
+                    </p>
+                </div>
+
+                <div class="group">
+                    <div class="image-slot mb-6">
+                        <img src="aime_cleanroom.jpg" alt="AIME Project" loading="lazy" onerror="this.style.display='none'">
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold mb-2 text-slate-900 tracking-tight">Silicon PV Cells Fabrication</h3>
+                    <p class="tech-font text-xs text-blue-600 mb-4 font-bold uppercase tracking-wider">AIME Plateforme, Toulouse (31)</p>
+                    <p class="text-base text-slate-700 leading-relaxed font-normal">
+                        ISO 6/7 Cleanroom environment. Full manufacturing cycle of PV cells including photolithography, doping, and oxidation processes.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACADEMIC PATH (FULL WIDTH TIMELINE) -->
+        <section class="mb-40 reveal">
+            <h2 class="tech-font text-blue-600 text-xs md:text-sm font-bold uppercase tracking-[0.4em] mb-20 text-center">// Academic_Path</h2>
+            
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                
+                <!-- 1. ENSEEIHT -->
+                <div class="relative mb-20">
+                    <div class="timeline-dot"></div>
+                    <div class="ml-12 sm:ml-16 bento-card p-5 sm:p-8">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                            <div>
+                                <h4 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">ENSEEIHT (INP Toulouse)</h4>
+                                <p class="text-blue-600 font-semibold text-base sm:text-lg mt-1">1st Year M.Eng. in Electrical & Automation (3EA)</p>
+                            </div>
+                            <div class="sm:text-right shrink-0">
+                                <span class="tech-font font-bold text-slate-900 text-sm sm:text-base">2026 – 2028</span>
+                                <p class="tech-font text-xs text-slate-600 font-bold uppercase tracking-wider mt-1">Toulouse (31)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. BUT -->
+                <div class="relative mb-20">
+                    <div class="timeline-dot"></div>
+                    <div class="ml-12 sm:ml-16 bento-card p-5 sm:p-8">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                            <div>
+                                <h4 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Bachelor in Applied Physics & Instrumentation</h4>
+                                <p class="text-slate-600 font-semibold text-sm mt-1">(BUT Mesures Physiques)</p>
+                            </div>
+                            <div class="sm:text-right shrink-0">
+                                <span class="tech-font font-bold text-slate-900 text-sm sm:text-base">2024 – 2026</span>
+                                <p class="tech-font text-xs text-slate-600 font-bold uppercase tracking-wider mt-1">IUT Toulouse (31)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. INSA -->
+                <div class="relative mb-20">
+                    <div class="timeline-dot"></div>
+                    <div class="ml-12 sm:ml-16 bento-card p-5 sm:p-8">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                            <div>
+                                <h4 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">INSA Toulouse</h4>
+                                <p class="text-slate-700 font-semibold text-base sm:text-lg mt-1">Integrated Preparatory Cycle</p>
+                            </div>
+                            <div class="sm:text-right shrink-0">
+                                <span class="tech-font font-bold text-slate-900 text-sm sm:text-base">2023 – 2024</span>
+                                <p class="tech-font text-xs text-slate-600 font-bold uppercase tracking-wider mt-1">Toulouse (31)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. LYCEE -->
+                <div class="relative">
+                    <div class="timeline-dot"></div>
+                    <div class="ml-12 sm:ml-16 bento-card p-5 sm:p-8">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                            <div class="max-w-2xl">
+                                <h4 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Saint-Joseph Private High School</h4>
+                                <p class="text-slate-800 font-medium text-base mt-2">
+                                    French Scientific Baccalaureate • European Section (Spanish) • <span class="text-blue-600 font-bold">Graduated with Highest Honors</span>
+                                </p>
+                                <p class="text-sm text-slate-700 leading-relaxed mt-2 font-normal">
+                                    Specializations: Mathematics, Life & Earth Sciences, Physics-Chemistry, and Expert Mathematics.
+                                </p>
+                            </div>
+                            <div class="sm:text-right shrink-0">
+                                <span class="tech-font font-bold text-slate-900 text-sm sm:text-base">Graduated 2023</span>
+                                <p class="tech-font text-xs text-slate-600 font-bold uppercase tracking-wider mt-1">Oloron Sainte-Marie (64)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MOBILITY & LANGUAGES -->
+        <section id="mobility" class="mb-40 reveal">
+            <div class="flex items-center gap-6 mb-16">
+                <h2 class="tech-font text-blue-600 text-xs md:text-sm font-bold uppercase tracking-[0.4em]">// Mobility</h2>
+                <div class="rule"></div>
+            </div>
+            
+            <!-- HORIZONTAL LANGUAGES SECTION (ABOVE) -->
+            <div class="bento-card p-6 md:p-8 bg-slate-50 border-slate-200 mb-10">
+                <span class="tech-font text-xs font-bold text-slate-800 uppercase tracking-widest block mb-4">// Linguistic_Proficiency</span>
+                <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-6">Languages</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-4 bg-white/70 rounded border border-slate-200/60 transition-all hover:border-slate-400">
+                        <span class="tech-font text-xs font-bold text-blue-600 uppercase tracking-wider block mb-1">B2 • Advanced</span>
+                        <p class="text-slate-800 text-sm leading-relaxed">
+                            <strong class="text-slate-900 font-bold">English:</strong> Professional proficiency — Ready for international mobility.
+                        </p>
+                        <div class="language-meter mt-4" data-level="B2">
+                            <input aria-label="English proficiency level" type="range" min="0" max="6" value="4" step="1" disabled>
+                            <div class="language-scale"><span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span></div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white/70 rounded border border-slate-200/60 transition-all hover:border-slate-400">
+                        <span class="tech-font text-xs font-bold text-blue-600 uppercase tracking-wider block mb-1">B2 • Fluent</span>
+                        <p class="text-slate-800 text-sm leading-relaxed">
+                            <strong class="text-slate-900 font-bold">Spanish:</strong> Practiced since elementary school — Fluent for academic and cultural immersion.
+                        </p>
+                        <div class="language-meter mt-4" data-level="B2">
+                            <input aria-label="Spanish proficiency level" type="range" min="0" max="6" value="4" step="1" disabled>
+                            <div class="language-scale"><span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span></div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white/70 rounded border border-slate-200/60 transition-all hover:border-slate-400">
+                        <span class="tech-font text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1">A1 • Beginner</span>
+                        <p class="text-slate-800 text-sm leading-relaxed">
+                            <strong class="text-slate-900 font-bold">Mandarin Chinese:</strong> Beginner level — Active introductory learning.
+                        </p>
+                        <div class="language-meter mt-4" data-level="A1">
+                            <input aria-label="Mandarin Chinese proficiency level" type="range" min="0" max="6" value="1" step="1" disabled>
+                            <div class="language-scale"><span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOBILITY PLANS SECTION (BELOW) -->
+            <div class="bento-card p-6 md:p-10">
+                <span class="tech-font text-xs font-bold text-slate-800 uppercase tracking-widest block mb-4">// International_Horizon</span>
+                <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-6">Mobility Plans</h3>
+                
+                <p class="text-base text-slate-700 font-normal leading-relaxed mb-8">
+                    My goal is to complete a semester or an academic exchange abroad to combine high-level technical expertise with deep cultural and linguistic immersion. I am particularly drawn to two distinct horizons that reflect both my technological ambitions and my personal background.
+                </p>
+
+                <!-- INTERACTIVE DESTINATIONS CARDS (HOVER / CLICK TO REVEAL INFO) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="dest-card p-6 active" data-dest="china">
+                        <span class="tech-font text-xs font-bold text-blue-600 uppercase tracking-wider block mb-2">// Horizon A</span>
+                        <h4 class="text-xl font-extrabold mb-2">China 🇨🇳</h4>
+                        <p class="dest-desc text-sm text-slate-700 leading-relaxed font-normal">
+                            Appeals to me for its scale, its ultra-dynamic technological ecosystem, and its pioneering innovations in automated systems and smart infrastructures.
+                        </p>
+                    </div>
+                    <div class="dest-card p-6" data-dest="argentina">
+                        <span class="tech-font text-xs font-bold text-blue-600 uppercase tracking-wider block mb-2">// Horizon B</span>
+                        <h4 class="text-xl font-extrabold mb-2">Argentina 🇦🇷</h4>
+                        <p class="dest-desc text-sm text-slate-700 leading-relaxed font-normal">
+                            Represents an ideal opportunity to fully immerse myself in a rich, vibrant culture and leverage the Spanish practice maintained since elementary school.
+                        </p>
+                    </div>
+                    <div class="dest-card p-6" data-dest="mexico">
+                        <span class="tech-font text-xs font-bold text-blue-600 uppercase tracking-wider block mb-2">// Horizon B</span>
+                        <h4 class="text-xl font-extrabold mb-2">Mexico 🇲🇽</h4>
+                        <p class="dest-desc text-sm text-slate-700 leading-relaxed font-normal">
+                            A fantastic environment for cultural immersion, combining historical depth with active Spanish-speaking academic and professional development.
+                        </p>
+                    </div>
+                </div>
+
+                <p class="text-base text-slate-700 font-normal leading-relaxed">
+                    This experience would allow me not only to acquire advanced engineering competencies in a different environment, but also to grow through unique human and cultural discoveries.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- 4. ENGAGEMENT -->
+        <section id="engagement" class="mb-40 reveal">
+            <div class="flex items-center gap-6 mb-16">
+                <h2 class="tech-font text-blue-600 text-xs md:text-sm font-bold uppercase tracking-[0.4em]">// Engagement</h2>
+                <div class="rule"></div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Card 1: Food Bank -->
+                <div class="bento-card p-8 md:p-12 border-t-4 border-t-blue-600">
+                    <span class="tech-font text-xs font-bold text-blue-600 uppercase tracking-wider block">// Volunteering</span>
+                    <h4 class="text-2xl font-extrabold text-slate-900 mt-2 tracking-tight">Food Bank Volunteer</h4>
+                    <p class="text-base text-slate-700 font-normal mt-4 leading-relaxed">
+                        <strong class="text-slate-900 font-bold">Banque Alimentaire (2020–2023):</strong> Food collection and solidarity drives in Oloron Sainte-Marie (64).
+                    </p>
+                </div>
+                <!-- Card 2: Disability Support -->
+                <div class="bento-card p-8 md:p-12 border-t-4 border-t-blue-600">
+                    <span class="tech-font text-xs font-bold text-blue-600 uppercase tracking-wider block">// Social_Support</span>
+                    <h4 class="text-2xl font-extrabold text-slate-900 mt-2 tracking-tight">Hospitalité Basco-Béarnaise</h4>
+                    <p class="text-base text-slate-700 font-normal mt-4 leading-relaxed">
+                        <strong class="text-slate-900 font-bold">Lourdes (2023):</strong> One-week support and assistance for individuals with disabilities.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ACTIVITIES -->
+        <section id="activities" class="mb-40 reveal">
+            <div class="flex items-center gap-6 mb-16">
+                <h2 class="tech-font text-blue-600 text-xs md:text-sm font-bold uppercase tracking-[0.4em]">// Activities</h2>
+                <div class="rule"></div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Card 1: Sports & Endurance -->
+                <div class="bento-card p-6 md:p-10">
+                    <span class="tech-font text-xs font-bold text-slate-800 uppercase tracking-widest block mb-6">// Sports & Passions</span>
+                    <ul class="space-y-4 font-semibold text-sm text-slate-900">
+                        <li class="flex justify-between items-center py-2 border-b border-slate-200">
+                            <span>Swimming</span>
+                        </li>
+                        <li class="flex justify-between items-center py-2">
+                            <span>Football (7 years in a club)</span>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Card 2: Gaming & Culture -->
+                <div class="bento-card p-6 md:p-10 bg-slate-50 border-slate-200">
+                    <span class="tech-font text-xs font-bold text-slate-800 uppercase tracking-widest block mb-6">// Mind & Culture</span>
+                    <ul class="space-y-4 font-semibold text-sm text-slate-900">
+                        <li class="flex justify-between items-center py-2 border-b border-slate-200">
+                            <span>Video Games (Exploration, Competition, RPGs)</span>
+                        </li>
+                        <li class="flex justify-between items-center py-2">
+                            <span>Reading (19th-Century Literature)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. CAREER -->
+        <section id="career" class="pb-40 reveal text-center">
+            <div class="flex items-center gap-6 mb-16">
+                <h2 class="tech-font text-blue-600 text-xs md:text-sm font-bold uppercase tracking-[0.4em]">// Career</h2>
+                <div class="rule"></div>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 mb-24">
+                <a href="CV_Patxi_Lavigne_EN.pdf" class="px-8 py-4 bento-card tech-font text-xs font-bold uppercase tracking-widest text-slate-900 transition-all">Resume_English</a>
+                <a href="CV_Patxi_Lavigne_FR.pdf" class="px-8 py-4 bento-card tech-font text-xs font-bold uppercase tracking-widest text-slate-900 transition-all">CV_Français</a>
+                <a href="https://www.linkedin.com/in/patxi-lavigne-4205082ab" target="_blank" rel="noopener noreferrer" class="px-8 py-4 bg-blue-600 text-white tech-font text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-lg">LinkedIn Profile</a>
+            </div>
+            
+            <!-- PITCH VIDEO -->
+            <div class="max-w-4xl mx-auto rounded overflow-hidden bg-slate-50 p-6 md:p-16 border border-slate-200">
+                <span class="tech-font text-xs font-bold text-slate-800 uppercase tracking-widest block mb-6">// Elevator_Pitch</span>
+                <div class="image-slot flex items-center justify-center bg-white border-2 border-dashed border-slate-300">
+                    <p class="tech-font text-xs text-slate-500 tracking-[0.4em] uppercase font-bold">Video_Stream_Offline</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-20 border-t border-slate-200 text-slate-600 font-semibold text-xs tech-font uppercase tracking-[0.2em] md:tracking-[0.4em] px-6">
+        Patxi Lavigne / ENSEEIHT 3EA / Toulouse (31)
+    </footer>
+
+    <script>
+    (function () {
+        var root = document.documentElement;
+
+        // Language meters reflect the levels already stated in the original text.
+        document.querySelectorAll('.language-meter input[type="range"]').forEach(function (slider) {
+            slider.style.setProperty('--level', (Number(slider.value) / Number(slider.max) * 100) + '%');
+        });
+
+        // Interactivity for destinations cards
+        document.querySelectorAll('.dest-card').forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                document.querySelectorAll('.dest-card').forEach(function(c) { c.classList.remove('active'); });
+                card.classList.add('active');
+            });
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.dest-card').forEach(function(c) { c.classList.remove('active'); });
+                card.classList.add('active');
+            });
+        });
+
+        var links = document.getElementById('nav-links');
+        var panel = document.getElementById('nav-panel');
+        var toggle = document.getElementById('nav-toggle');
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Mobile menu built from the desktop links
+        links.querySelectorAll('a').forEach(function (a) { panel.appendChild(a.cloneNode(true)); });
+        function setMenu(open) { panel.classList.toggle('open', open); toggle.setAttribute('aria-expanded', open); }
+        toggle.addEventListener('click', function () { setMenu(!panel.classList.contains('open')); });
+        panel.addEventListener('click', function (e) { if (e.target.tagName === 'A') setMenu(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+        // Cards and timeline steps get a staggered unveil
+        var tl = document.querySelector('.timeline-container');
+        document.querySelectorAll('main .bento-card, main .group, .timeline-container > .relative').forEach(function (el) {
+            if (tl && tl.contains(el) && !el.matches('.timeline-container > .relative')) return;
+            el.classList.add('rv');
+            var i = Array.prototype.indexOf.call(el.parentNode.children, el);
+            el.style.setProperty('--d', (i % 3) * 0.12 + 's');
+        });
+
+        // Scroll-driven: progress bar, timeline fill, hero trace drift
+        var trace = document.querySelector('.trace'), ticking = false;
+        function onScroll() {
+            ticking = false;
+            var h = root.scrollHeight - window.innerHeight;
+            root.style.setProperty('--sp', h > 0 ? window.scrollY / h : 0);
+            if (tl) {
+                var r = tl.getBoundingClientRect();
+                tl.style.setProperty('--p', Math.max(0, Math.min(1, (window.innerHeight * 0.6 - r.top) / r.height)));
+            }
+            if (trace && !reduce) trace.style.transform = 'translateX(' + (-window.scrollY * 0.08) + 'px)';
+        }
+        window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+        window.addEventListener('resize', onScroll);
+        onScroll();
+
+        if (!('IntersectionObserver' in window)) {
+            document.querySelectorAll('.reveal, .rv').forEach(function (el) { el.classList.add('in'); });
+            return;
+        }
+
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { 
+                    e.target.classList.add('in'); 
+                    io.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal, .rv').forEach(function (el) { io.observe(el); });
+
+        // Highlight the current section in the nav
+        var all = document.querySelectorAll('.nav-link');
+        var spy = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                all.forEach(function (a) {
+                    var on = a.getAttribute('href') === '#' + e.target.id;
+                    a.classList.toggle('active-nav', on);
+                    if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+                });
+            });
+        }, { rootMargin: '-40% 0px -55% 0px' });
+        document.querySelectorAll('main section[id]').forEach(function (sec) { spy.observe(sec); });
+    })();
+    </script>
+
+</body>
+</html>
